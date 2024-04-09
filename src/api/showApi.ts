@@ -14,3 +14,10 @@ export const fetchEpisodes = async (showId: number): Promise<Episode[]> => {
     );
     return response.data;
 };
+
+export const fetchEpisodeById = async (episodeId: number): Promise<Episode> => {
+    const response = await axios.get<Episode>(
+        `${API_BASE_URL}/episodes/${episodeId}`
+    );
+    return response.data;
+};

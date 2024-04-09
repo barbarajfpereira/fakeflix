@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { fetchShowDetails, fetchEpisodes } from '../api/showApi';
-import { Show, Episode } from '../types';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { fetchEpisodes, fetchShowDetails } from '../api/showApi';
+import { Episode, Show } from '../types';
 
 const Homepage = () => {
     const [show, setShow] = useState<Show | null>(null);
@@ -43,65 +44,82 @@ const Homepage = () => {
     }, []);
 
     if (isLoading) {
-        return <Wrapper>Loading...</Wrapper>;
+        return <StyledInnerWrapper>Loading...</StyledInnerWrapper>;
     }
 
     if (!show) {
-        return <Wrapper>Error loading show details</Wrapper>;
+        return (
+            <StyledInnerWrapper>Error loading show details</StyledInnerWrapper>
+        );
     }
 
     return (
-        <Wrapper>
-            <h1>{show.name}</h1>
-            <p dangerouslySetInnerHTML={{ __html: show.summary }}></p>
-            <img
-                src={show.image.original}
-                alt={show.name}
-                style={{ width:'30vw', height:'50vh', objectFit: 'cover' }}
-            />
-            <WrapperSeasons>
-                {Object.keys(episodesBySeason)
-                    .map(season => parseInt(season, 10))
-                    .map(season => (
-                        <div key={season}>
-                            <h2>Season {season}</h2>
-                            <ul>
-                                {episodesBySeason[season].map(episode => (
-                                    <li
-                                        key={episode.id}
-                                        style={{
-                                            listStyle: 'none',
-                                            marginBottom: '6px',
-                                        }}
-                                    >
-                                        <a
-                                            href={episode.url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            style={{ textDecoration: 'none' }}
+        <Wrapper bgImage={show.image.original}>
+            <StyledInnerWrapper>
+                <h1>{show.name}</h1>
+                <StyledSubtitle
+                    dangerouslySetInnerHTML={{ __html: show.summary }}
+                />
+                <WrapperSeasons>
+                    {Object.keys(episodesBySeason)
+                        .map(season => parseInt(season, 10))
+                        .map(season => (
+                            <div key={season}>
+                                <h2>Season {season}</h2>
+                                <ul>
+                                    {episodesBySeason[season].map(episode => (
+                                        <li
+                                            key={episode.id}
+                                            style={{
+                                                listStyle: 'none',
+                                                marginBottom: '6px',
+                                            }}
                                         >
-                                            {episode.name}
-                                        </a>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    ))}
-            </WrapperSeasons>
+                                            <Link
+                                                to={`/episode/${episode.id}`}
+                                                state={{ episode }}
+                                                style={{
+                                                    textDecoration: 'none',
+                                                }}
+                                            >
+                                                {episode.name}
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                </WrapperSeasons>
+            </StyledInnerWrapper>
         </Wrapper>
     );
 };
 
-const Wrapper = styled.div`
+interface WrapperProps {
+    bgImage: string;
+}
+
+const Wrapper = styled.div<WrapperProps>`
+    background: url(${props => props.bgImage}) no-repeat top center;
+    background-size: cover;
+    width: 100%;
+    min-height: 100vh;
+`;
+const WrapperSeasons = styled.div`
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+`;
+const StyledInnerWrapper = styled.div`
     padding: 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    background: rgba(255, 255, 255, 0.9);
 `;
-const WrapperSeasons = styled.div`
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+const StyledSubtitle = styled.p`
+    font-size: 1.2rem;
+    line-height: 1.5;
 `;
 
 export default Homepage;
