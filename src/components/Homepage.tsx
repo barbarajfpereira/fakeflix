@@ -21,10 +21,12 @@ const Homepage = () => {
     ): Record<number, Episode[]> => {
         return episodes.reduce((prevEp, currEp) => {
             const { season } = currEp;
+            // check if already exists, and if not, create empty array
             if (!prevEp[season]) {
                 prevEp[season] = [];
             }
             prevEp[season].push(currEp);
+
             return prevEp;
         }, {} as Record<number, Episode[]>);
     };
@@ -105,6 +107,7 @@ const media = {
     tablet: '@media(min-width: 768px)',
 };
 
+// Styled Components
 const Wrapper = styled.div<WrapperProps>`
     background: url(${props => props.bgImage}) no-repeat top center;
     background-size: cover;

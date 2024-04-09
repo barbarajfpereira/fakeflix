@@ -4,13 +4,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { fetchEpisodeById } from '../api/showApi';
 import { RootState } from '../store';
-import { clearEpisodeDetails, setEpisodeDetails } from '../store/episodeSlice';
+import { setEpisodeDetails } from '../store/episodeSlice';
 
 const EpisodeDetails = () => {
     const dispatch = useDispatch();
-    const { id } = useParams<{ id: string }>();
-    const episodeState = useSelector((state: RootState) => state.episode);
     const navigate = useNavigate();
+    const episodeState = useSelector((state: RootState) => state.episode);
+    const { id } = useParams<{ id: string }>();
     const { details } = episodeState;
 
     const goBack = () => {
@@ -30,10 +30,6 @@ const EpisodeDetails = () => {
         if (id) {
             loadEpisodeDetails();
         }
-
-        return () => {
-            dispatch(clearEpisodeDetails());
-        };
     }, [dispatch, id]);
 
     if (episodeState.isLoading) {
@@ -78,6 +74,7 @@ const media = {
     tablet: '@media(min-width: 768px)',
 };
 
+// Styled Components
 const Wrapper = styled.div`
     height: calc(100vh - 4rem);
     width: auto;

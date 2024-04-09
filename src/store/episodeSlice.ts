@@ -19,13 +19,9 @@ export const episodeSlice = createSlice({
             state.details = action.payload;
             state.isLoading = false;
         },
-        clearEpisodeDetails: state => {
-            state.details = null;
-            state.isLoading = false;
-        },
     },
 });
 
-export const { setEpisodeDetails, clearEpisodeDetails } = episodeSlice.actions;
+export const { setEpisodeDetails } = episodeSlice.actions;
 
 export default episodeSlice.reducer;
