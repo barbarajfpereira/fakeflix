@@ -11,6 +11,7 @@ const Homepage = () => {
     const dispatch = useDispatch();
     const show = useSelector((state: RootState) => state.show.details);
     const isLoading = useSelector((state: RootState) => state.show.isLoading);
+    const [error, setError] = useState('');
     const [episodesBySeason, setEpisodesBySeason] = useState<
         Record<number, Episode[]>
     >({});
@@ -41,6 +42,7 @@ const Homepage = () => {
                 setEpisodesBySeason(groupEpisodesBySeason(episodesData));
             } catch (error) {
                 console.error('Failed to fetch data:', error);
+                setError('Error loading show details');
             }
         };
 
@@ -51,10 +53,12 @@ const Homepage = () => {
         return <StyledInnerWrapper>Loading...</StyledInnerWrapper>;
     }
 
+    if (error) {
+        return <StyledInnerWrapper>{error}</StyledInnerWrapper>;
+    }
+
     if (!show) {
-        return (
-            <StyledInnerWrapper>Error loading show details</StyledInnerWrapper>
-        );
+        return <StyledInnerWrapper>Nothing to show</StyledInnerWrapper>;
     }
 
     return (
