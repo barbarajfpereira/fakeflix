@@ -1,14 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { fetchEpisodeById } from '../api/showApi';
-import { Episode } from '../types';
+import { RootState } from '../store';
+import { clearEpisodeDetails, setEpisodeDetails } from '../store/episodeSlice';
 
 const EpisodeDetails = () => {
+    const dispatch = useDispatch();
     const { id } = useParams<{ id: string }>();
-    const [episode, setEpisode] = useState<Episode | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const episodeState = useSelector((state: RootState) => state.episode);
     const navigate = useNavigate();
+    const { details } = episodeState;
 
     const goBack = () => {
         navigate('/');
@@ -18,24 +21,26 @@ const EpisodeDetails = () => {
         const loadEpisodeDetails = async () => {
             try {
                 const episodeData = await fetchEpisodeById(Number(id));
-                setEpisode(episodeData);
+                dispatch(setEpisodeDetails(episodeData));
             } catch (error) {
                 console.error('Failed to fetch episode details:', error);
-            } finally {
-                setIsLoading(false);
             }
         };
 
         if (id) {
             loadEpisodeDetails();
         }
-    }, [id]);
 
-    if (isLoading) {
+        return () => {
+            dispatch(clearEpisodeDetails());
+        };
+    }, [dispatch, id]);
+
+    if (episodeState.isLoading) {
         return <Wrapper>Loading...</Wrapper>;
     }
 
-    if (!episode) {
+    if (!details) {
         return <Wrapper>Error loading episode details</Wrapper>;
     }
 
@@ -45,24 +50,24 @@ const EpisodeDetails = () => {
                 <button onClick={goBack} aria-label="Go back">
                     &#x25c0;
                 </button>
-                {episode?.name}
+                {details.name}
             </StyledH1>
             <p>Summary:</p>
             <StyledSubtitle
-                dangerouslySetInnerHTML={{ __html: episode.summary }}
+                dangerouslySetInnerHTML={{ __html: details.summary }}
             />
             <p>Check out more about this episode:</p>
-            {episode.image && (
+            {details.image && (
                 <a
-                    href={episode.url}
+                    href={details.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{ textAlign: 'center' }}
                 >
                     <img
-                        src={episode.image.original}
+                        src={details.image.original}
                         width="50%"
-                        alt={`Cover for episode ${episode.name}`}
+                        alt={`Cover for episode ${details.name}`}
                     />
                 </a>
             )}

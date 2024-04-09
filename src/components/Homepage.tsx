@@ -1,15 +1,19 @@
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { fetchEpisodes, fetchShowDetails } from '../api/showApi';
-import { Episode, Show } from '../types';
+import { RootState } from '../store';
+import { setShowDetails } from '../store/showSlice';
+import { Episode } from '../types';
 
 const Homepage = () => {
-    const [show, setShow] = useState<Show | null>(null);
+    const dispatch = useDispatch();
+    const show = useSelector((state: RootState) => state.show.details);
+    const isLoading = useSelector((state: RootState) => state.show.isLoading);
     const [episodesBySeason, setEpisodesBySeason] = useState<
         Record<number, Episode[]>
     >({});
-    const [isLoading, setIsLoading] = useState(true);
     const powerPuffGirlsId = 6771;
 
     const groupEpisodesBySeason = (
@@ -31,17 +35,15 @@ const Homepage = () => {
                 const showData = await fetchShowDetails(powerPuffGirlsId);
                 const episodesData = await fetchEpisodes(powerPuffGirlsId);
 
-                setShow(showData);
+                dispatch(setShowDetails(showData));
                 setEpisodesBySeason(groupEpisodesBySeason(episodesData));
             } catch (error) {
                 console.error('Failed to fetch data:', error);
-            } finally {
-                setIsLoading(false);
             }
         };
 
         loadShowDetailsAndEpisodes();
-    }, []);
+    }, [dispatch]);
 
     if (isLoading) {
         return <StyledInnerWrapper>Loading...</StyledInnerWrapper>;
