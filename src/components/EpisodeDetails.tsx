@@ -64,9 +64,8 @@ const EpisodeDetails = () => {
                     rel="noopener noreferrer"
                     style={{ textAlign: 'center' }}
                 >
-                    <img
+                    <StyledImage
                         src={details.image.original}
-                        width="50%"
                         alt={`Cover for episode ${details.name}`}
                     />
                 </a>
@@ -75,13 +74,22 @@ const EpisodeDetails = () => {
     );
 };
 
+const media = {
+    tablet: '@media(min-width: 768px)',
+};
+
 const Wrapper = styled.div`
+    height: calc(100vh - 4rem);
+    width: auto;
     padding: 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     background: #d3deeb;
+    ${media.tablet} {
+        height: calc(100vh - 8rem);
+        padding: 4rem;
+    }
 `;
 const StyledH1 = styled.h1`
     display: flex;
@@ -91,6 +99,10 @@ const StyledSubtitle = styled.p`
     margin-top: 0;
     font-size: 1.2rem;
     line-height: 1.5;
+`;
+const StyledImage = styled.img`
+    max-width: 50%;
+    height: auto;
 `;
 
 export default EpisodeDetails;

@@ -101,6 +101,10 @@ interface WrapperProps {
     bgImage: string;
 }
 
+const media = {
+    tablet: '@media(min-width: 768px)',
+};
+
 const Wrapper = styled.div<WrapperProps>`
     background: url(${props => props.bgImage}) no-repeat top center;
     background-size: cover;
@@ -109,7 +113,11 @@ const Wrapper = styled.div<WrapperProps>`
 `;
 const WrapperSeasons = styled.div`
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr;
+    grid-gap: 1rem;
+    ${media.tablet} {
+        grid-template-columns: repeat(3, 1fr);
+    }
 `;
 const StyledInnerWrapper = styled.div`
     padding: 2rem;
@@ -118,6 +126,9 @@ const StyledInnerWrapper = styled.div`
     align-items: center;
     justify-content: center;
     background: rgba(255, 255, 255, 0.9);
+    ${media.tablet} {
+        padding: 4rem;
+    }
 `;
 const StyledSubtitle = styled.p`
     font-size: 1.2rem;
